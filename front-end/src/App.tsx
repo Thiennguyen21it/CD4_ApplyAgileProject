@@ -1,16 +1,20 @@
 import './App.css';
-import Navigation from './components/Navigate';
-import Footer from './components/Footer';
-import Intro from './components/Intro';
-import Activities from './components/Activities';
+import { BrowserRouter, Route, Routes } from 'react-router-dom'  // Import BrowserRouter
+import PageLayout from './layouts/PageLayout';
+import Home from './routes/home';
+import Archivement from './routes/archivements';
+
 function App() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navigation />
-      <Intro/>
-      <Activities/>
-      <Footer/>
-    </div>
+    <BrowserRouter>
+      <PageLayout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/achievement" element={<Archivement />} />
+        </Routes>
+      </PageLayout>
+    </BrowserRouter>
+
   );
 }
 
