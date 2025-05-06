@@ -4,6 +4,7 @@ import PageLayout from "./layouts/PageLayout";
 import Home from "./routes/home";
 import Archivement from "./routes/archivements";
 import AuthForm from "./routes/auth/AuthForm";
+import Blog from './routes/blog';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         />
         <Route path="/login" element={<AuthForm />} />
       </Routes>
+        <Route path="/blog" element={<Blog />} />
     </BrowserRouter>
   );
 }
