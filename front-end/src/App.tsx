@@ -27,8 +27,11 @@ function App() {
           }
         />
         <Route path="/login" element={<AuthForm />} />
+        <Route path="/blog" element={<PageLayout>
+              <Blog />
+            </PageLayout>} />
       </Routes>
-        <Route path="/blog" element={<Blog />} />
+        
     </BrowserRouter>
   );
 }
