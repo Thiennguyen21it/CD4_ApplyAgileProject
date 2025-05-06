@@ -109,26 +109,34 @@ This is a backend for web application built with:
    uv sync  # Install dependencies
    source .venv/bin/activate
 ````
+
 3. Environment Configuration
 
    - Copy `.env.example` to `.env`
    - Update configuration values
-   - 
-2. Backend run locally
+   -
+
+4. Backend run locally
 
    ```bash
    cd cd backend
    fastapi dev app/main.py
    ```
 
-4. Database Setup
+5. Database Setup
    ```bash
    alembic upgrade head  # Run migrations
    ```
-5. How to commit a migration
+6. How to commit a migration
    ```bash
    alembic revision --autogenerate -m "Commit message"
    ```
+
+## Start docker
+
+```bash
+  docker compose -f docker-compose-dev.yml watch
+```
 
 ## Security Features
 
