@@ -5,6 +5,7 @@ import Home from "./routes/home";
 import Archivement from "./routes/archivements";
 import AuthForm from "./routes/auth/AuthForm";
 import Blog from './routes/blog';
+import Contributors from "./routes/contributors";
 
 function App() {
   return (
@@ -23,6 +24,14 @@ function App() {
           element={
             <PageLayout>
               <Archivement />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/contributors"
+          element={
+            <PageLayout>
+              <Contributors />
             </PageLayout>
           }
         />
