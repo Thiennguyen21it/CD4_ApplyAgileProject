@@ -56,7 +56,7 @@ const Footer = () => {
             </div>
             <div>
               <p className="font-bold text-black">Call us</p>
-              <p className="text-gray-600">0962 414 125</p>
+              <p className="text-gray-600">0123 456 789</p>
             </div>
           </div>
           <div className="flex items-start gap-3 mb-4">
@@ -66,7 +66,7 @@ const Footer = () => {
             <div>
               <p className="font-bold text-black">Mail Us</p>
               <a href="mailto:dinhdongphuong@gmail.com" className="text-gray-600 underline">
-                dinhdongphuong@gmail.com
+              smile@gmail.com
               </a>
             </div>
           </div>
