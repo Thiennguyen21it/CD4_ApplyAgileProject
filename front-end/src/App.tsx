@@ -6,6 +6,7 @@ import Archivement from "./routes/archivements";
 import AuthForm from "./routes/auth/AuthForm";
 import Blog from './routes/blog';
 import Contributors from "./routes/contributors";
+import ContactPage from "./routes/qacontact";
 
 function App() {
   return (
@@ -37,10 +38,13 @@ function App() {
         />
         <Route path="/login" element={<AuthForm />} />
         <Route path="/blog" element={<PageLayout>
-              <Blog />
-            </PageLayout>} />
+          <Blog />
+        </PageLayout>} />
+        <Route path="/qa-contact" element={<PageLayout>
+          <ContactPage />
+        </PageLayout>} />
       </Routes>
-        
+
     </BrowserRouter>
   );
 }

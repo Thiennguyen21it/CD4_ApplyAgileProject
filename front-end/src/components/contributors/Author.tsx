@@ -9,7 +9,7 @@ export default function FounderSection() {
             alt="Founder"
             className="w-64 h-64 object-cover rounded-full mb-4"
           />
-          <h3 className="text-lg font-semibold">Dinh Thi Dong Phuong</h3>
+          <h3 className="text-lg font-semibold">Nguyen Van A</h3>
           <div className="text-sm mt-3 space-y-2 flex flex-col items-start">
             <div className="text-start font-medium">📞 +123-456-7890</div>
             <div className="text-start font-medium">✉️ hello@reallygreatsite.com</div>
@@ -19,7 +19,7 @@ export default function FounderSection() {
 
         <div className="text-gray-700 text-sm leading-relaxed flex-1">
           <p className="mb-4">
-            Dinh Thi Dong Phuong is the Director of Smile Eye Charity. With a passion for community
+            Nguyen Van A is the Director of Smile Eye Charity. With a passion for community
             development, she has led numerous initiatives to improve the lives of underprivileged
             children. Her vision combines education, healthcare, and compassion to create a lasting
             impact.
