@@ -2,8 +2,6 @@ services:
   db:
     image: postgres:12
     restart: always
-    ports:
-      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -16,32 +14,49 @@ services:
       - .env
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
-    networks:
-      - app-network
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
+      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+    ports:
+      - "5433:5432"
 
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/app
-    env_file:
-      - .env
-    ports:
-      - "8000:8000"
+      context: ./backend
+    restart: always
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - app-network
-    command: sh -c "alembic upgrade head && fastapi run --workers 4 app/main.py"
+        restart: true
+    env_file:
+      - .env
+    environment:
+      - ENVIRONMENT=local
+      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS:-["http://localhost:3000","http://localhost:8000"]}
+      - SECRET_KEY=${SECRET_KEY?Variable not set}
+      - FIRST_SUPERUSER=${FIRST_SUPERUSER?Variable not set}
+      - FIRST_SUPERUSER_PASSWORD=${FIRST_SUPERUSER_PASSWORD?Variable not set}
+      - POSTGRES_SERVER=db
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8000
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://localhost:8000/api/v1/utils/health-check/",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   app-db-data:
-
-networks:
-  app-network:
-    driver: bridge
-  traefik-public:
-    # Allow setting it to false for testing
-    external: true
