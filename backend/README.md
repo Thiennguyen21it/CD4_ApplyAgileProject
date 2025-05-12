@@ -1,84 +1,156 @@
-# FastAPI Project - Backend
+# Project Plan
 
-## Requirements
+## Project Overview
 
-- [Docker](https://www.docker.com/).
-- [uv](https://docs.astral.sh/uv/) for Python package and environment management.
+This is a backend for web application built with:
 
-## Docker Compose
+- Backend: FastAPI (Python)
+- Database: PostgreSQL
+- Authentication: JWT (JSON Web Tokens)
 
-Start the local development environment with Docker Compose following the guide in [../development.md](../development.md).
+## Project Structure
 
-## General Workflow
+````
+├── backend/                  # FastAPI backend
+│   ├── app/
+│   │   ├── api/             # API endpoints
+│   │   ├── core/            # Core functionality
+│   │   ├── crud/            # Database CRUD operations
+│   │   ├── models/          # Database models
+│   │   └── tests/           # Backend tests
+│   └── alembic/             # Database migrations
 
-By default, the dependencies are managed with [uv](https://docs.astral.sh/uv/), go there and install it.
 
-From `./backend/` you can install all the dependencies with:
+## API Endpoints
 
-```console
-$ uv sync
+### Authentication
+- `POST /api/v1/users/signup` - Register a new user
+  - Request body:
+    ```json
+    {
+      "email": "string",
+      "password": "string",
+      "full_name": "string"
+    }
+    ```
+  - No authentication required
+  - Returns the created user object
+
+- `POST /api/v1/login/access-token` - Login for access token
+  - Form data:
+    ```
+    username: "string" (email)
+    password: "string"
+    ```
+  - Returns JWT access token
+
+- `POST /api/v1/login/test-token` - Test access token
+  - Requires authentication
+  - Returns current user info
+
+- `POST /api/v1/login/reset-password` - Reset password
+  - Request body:
+    ```json
+    {
+      "token": "string",
+      "new_password": "string"
+    }
+    ```
+
+- `POST /api/v1/login/reset-password/{token}` - Reset password with token
+
+### Users
+
+- `GET /api/v1/users/` - Read users
+- `POST /api/v1/users/` - Create user
+- `GET /api/v1/users/me` - Read current user
+- `PUT /api/v1/users/me` - Update current user
+- `GET /api/v1/users/{user_id}` - Read user by ID
+- `PUT /api/v1/users/{user_id}` - Update user
+- `DELETE /api/v1/users/{user_id}` - Delete user
+
+### Items (Example Resource)
+
+- `GET /api/v1/items/` - Read items
+- `POST /api/v1/items/` - Create item
+- `GET /api/v1/items/{item_id}` - Read item
+- `PUT /api/v1/items/{item_id}` - Update item
+- `DELETE /api/v1/items/{item_id}` - Delete item
+
+### Utils
+
+- `POST /api/v1/utils/test-email` - Test email sending
+- `GET /api/v1/utils/status` - System status check
+
+## Database Models
+
+### User Model
+
+- id: UUID (primary key)
+- email: Email address (unique)
+- hashed_password: Hashed password
+- is_active: Boolean
+- is_superuser: Boolean
+- full_name: String (optional)
+
+### Item Model (Example)
+
+- id: UUID (primary key)
+- title: String
+- description: String (optional)
+- owner_id: UUID (foreign key to User)
+
+## Start Server locally
+
+1. Backend Setup
+
+   ```bash
+   cd backend
+   uv sync  # Install dependencies
+   source .venv/bin/activate
+````
+
+3. Environment Configuration
+
+   - Copy `.env.example` to `.env`
+   - Update configuration values
+   -
+
+4. Backend run locally
+
+   ```bash
+   cd cd backend
+   fastapi dev app/main.py
+   ```
+
+5. Database Setup
+   ```bash
+   alembic upgrade head  # Run migrations
+   ```
+6. How to commit a migration
+   ```bash
+   alembic revision --autogenerate -m "Commit message"
+   ```
+
+## Start Server with docker
+
+```bash
+  cd backend
+  docker compose -f docker-compose-dev.yml watch
 ```
 
-Then you can activate the virtual environment with:
+## API Documentation
 
-```console
-$ source .venv/bin/activate
-```
+Once the server is running, access the API documentation at:
 
-Make sure your editor is using the correct Python virtual environment, with the interpreter at `backend/.venv/bin/python`.
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
-Modify or add SQLModel models for data and SQL tables in `./backend/app/models.py`, API endpoints in `./backend/app/api/`, CRUD (Create, Read, Update, Delete) utils in `./backend/app/crud.py`.
+## Security Features
 
-### Test Coverage
-
-When the tests are run, a file `htmlcov/index.html` is generated, you can open it in your browser to see the coverage of the tests.
-
-## Migrations
-
-As during local development your app directory is mounted as a volume inside the container, you can also run the migrations with `alembic` commands inside the container and the migration code will be in your app directory (instead of being only inside the container). So you can add it to your git repository.
-
-Make sure you create a "revision" of your models and that you "upgrade" your database with that revision every time you change them. As this is what will update the tables in your database. Otherwise, your application will have errors.
-
-- Start an interactive session in the backend container:
-
-```console
-$ docker compose exec backend bash
-```
-
-- Alembic is already configured to import your SQLModel models from `./backend/app/models.py`.
-
-- After changing a model (for example, adding a column), inside the container, create a revision, e.g.:
-
-```console
-$ alembic revision --autogenerate -m "Add column last_name to User model"
-```
-
-- Commit to the git repository the files generated in the alembic directory.
-
-- After creating the revision, run the migration in the database (this is what will actually change the database):
-
-```console
-$ alembic upgrade head
-```
-
-If you don't want to use migrations at all, uncomment the lines in the file at `./backend/app/core/db.py` that end in:
-
-```python
-SQLModel.metadata.create_all(engine)
-```
-
-and comment the line in the file `scripts/prestart.sh` that contains:
-
-```console
-$ alembic upgrade head
-```
-
-If you don't want to start with the default models and want to remove them / modify them, from the beginning, without having any previous revision, you can remove the revision files (`.py` Python files) under `./backend/app/alembic/versions/`. And then create a first migration as described above.
-
-## Email Templates
-
-The email templates are in `./backend/app/email-templates/`. Here, there are two directories: `build` and `src`. The `src` directory contains the source files that are used to build the final email templates. The `build` directory contains the final email templates that are used by the application.
-
-Before continuing, ensure you have the [MJML extension](https://marketplace.visualstudio.com/items?itemName=attilabuti.vscode-mjml) installed in your VS Code.
-
-Once you have the MJML extension installed, you can create a new email template in the `src` directory. After creating the new email template and with the `.mjml` file open in your editor, open the command palette with `Ctrl+Shift+P` and search for `MJML: Export to HTML`. This will convert the `.mjml` file to a `.html` file and now you can save it in the build directory.
+- JWT Authentication
+- Password hashing with bcrypt
+- CORS protection
+- PostgreSQL with SQLModel ORM
+- Environment-based configuration
+- Superuser system
